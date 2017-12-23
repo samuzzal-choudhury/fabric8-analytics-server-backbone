@@ -20,17 +20,16 @@ def get_requirements():
 reqs, dep_links = get_requirements()
 
 setup(
-    name='bayesian',
+    name='f8a-server-backbone',
     version='0.1',
-    packages=find_packages(exclude=['tests', 'tests.*']),
-    scripts=['hack/coreapi-server.sh'],
+    scripts=['./coreapi-server.sh'],
     install_requires=reqs,
     dependency_links=dep_links,
     include_package_data=True,
     author='Slavek Kabrda',
     author_email='slavek@redhat.com',
-    description='fabric8-analytics Core API Server',
+    description='fabric8-analytics Core API Server Backbone',
     license='ASL 2.0',
-    keywords='fabric8 analytics server',
-    url='https://github.com/fabric8-analytics/fabric8-analytics-server'
+    keywords='fabric8 analytics server backbone',
+    url='https://github.com/fabric8-analytics/fabric8-analytics-server-backbone'
 )

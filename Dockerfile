@@ -1,8 +1,5 @@
 FROM registry.centos.org/centos/centos:7
 
-ENV LANG=en_US.UTF-8 \
-    F8A_WORKER_VERSION=d43966a
-
 RUN useradd -d /coreapi coreapi
 # python3-pycurl is needed for Amazon SQS (boto lib), we need CentOS' rpm - installing it from pip results in NSS errors
 RUN yum install -y epel-release &&\
@@ -23,11 +20,7 @@ ENTRYPOINT ["/usr/bin/coreapi-server.sh"]
 COPY ./ /coreapi
 RUN pushd /coreapi && \
     pip3 install . && \
-    popd && \
-    # needed for DB migrations
-    find coreapi/ -mindepth 1 -maxdepth 1 \( ! -name 'alembic*' -a ! -name hack \) -exec rm -rf {} +
-
-RUN pip3 install git+https://github.com/samuzzal-choudhury/fabric8-analytics-worker.git@${F8A_WORKER_VERSION}
+    popd
 
 COPY .git/ /tmp/.git
 # date and hash of last commit

@@ -1,10 +1,10 @@
 REGISTRY?=registry.devshift.net
-REPOSITORY?=bayesian/bayesian-api
+REPOSITORY?=bayesian/bayesian-api-backbone
 DEFAULT_TAG=latest
 
 .PHONY: all docker-build fast-docker-build test get-image-name get-image-repository docker-build-tests fast-docker-build-tests
 
-all: fast-docker-build
+all: docker-build
 
 docker-build:
 	docker build --no-cache -t $(REGISTRY)/$(REPOSITORY):$(DEFAULT_TAG) .
