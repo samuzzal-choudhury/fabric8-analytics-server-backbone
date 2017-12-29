@@ -15,5 +15,7 @@ COPY ./src /src
 
 ADD scripts/entrypoint.sh /bin/entrypoint.sh
 
+RUN chmod 0644 /bin/entrypoint.sh
+
 ENTRYPOINT ["/bin/entrypoint.sh"]
 
