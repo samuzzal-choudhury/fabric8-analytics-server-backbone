@@ -503,7 +503,7 @@ class RecommendationTask():
             session.rollback()
             return {
                 'recommendation': 'database error',
-                'stack_id': external_request_id,
+                'external_request_id': external_request_id,
                 'message': '%s' % e}
 
-        return {'recommendation': 'success','stack_id': external_request_id}
+        return {'recommendation': 'success', 'external_request_id': external_request_id}
