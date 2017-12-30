@@ -1,0 +1,107 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: f8a-server-backbone
+    name: f8a-server-backbone
+  spec:
+    ports:
+    - name: "5000"
+      port: 5000
+      targetPort: 5000
+    selector:
+      io.kompose.service: f8a-server-backbone
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: f8a-server-backbone
+    name: f8a-server-backbone
+  spec:
+    replicas: 1
+    selector:
+      io.kompose.service: f8a-server-backbone
+    strategy:
+      resources: {}
+    template:
+      metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: f8a-server-backbone
+      spec:
+        containers:
+        - env:
+          - name: BAYESIAN_GREMLIN_HTTP_SERVICE_HOST
+            value: bayesian-gremlin-http-preview-b6ff-bayesian-preview.b6ff.rh-idev.openshiftapps.com
+          - name: BAYESIAN_GREMLIN_HTTP_SERVICE_PORT
+            value: "80"
+          - name: LICENSE_SERVICE_HOST
+            value: bayesian-license-scoring-bayesian-preview.b6ff.rh-idev.openshiftapps.com
+          - name: LICENSE_SERVICE_PORT
+            value: "80"
+          - name: PGM_SERVICE_HOST
+            value: aagam-outlier-stack-analysis.dev.rdu2c.fabric8.io
+          - name: PGM_SERVICE_PORT
+            value: "80"
+          - name: POSTGRESQL_DATABASE
+            valueFrom:
+              secretKeyRef:
+                name: coreapi-postgres
+                key: database
+          - name: POSTGRESQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: coreapi-postgres
+                key: password
+          - name: POSTGRESQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: coreapi-postgres
+                key: username
+          - name: API_BACKBONE_SERVICE_PORT
+            value: "5000"
+          image: 'spicemit/fabric8-analytics-server-backbone:rest_4'
+          name: f8a-server-backbone
+          ports:
+          - containerPort: 5000
+          resources: {}
+        restartPolicy: Always
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - f8a-server-backbone
+        from:
+          kind: ImageStreamTag
+          name: f8a-server-backbone:rest_4
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    labels:
+      io.kompose.service: f8a-server-backbone
+    name: f8a-server-backbone
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: spicemit/fabric8-analytics-server-backbone:rest_4
+      generation: null
+      importPolicy: {}
+      name: rest_4
+  status:
+    dockerImageRepository: ""
+kind: List
+metadata: {}
+
