@@ -32,9 +32,7 @@ class GraphDB:
     def execute_gremlin_dsl(self, payload):
         """Execute the gremlin query and return the response."""
         try:
-            print(json.dumps(payload))
             response = get_session_retry().post(self._bayesian_graph_url, data=json.dumps(payload))
-            # print(json.dumps(response))
 
             if response.status_code == 200:
                 json_response = response.json()
@@ -272,14 +270,12 @@ class RecommendationTask():
     description = 'Get Recommendation'
 
     def call_pgm(self, payload):
-        print(payload)
 
         """Calls the PGM model with the normalized manifest information to get
         the relevant packages"""
         try:
             # TODO remove hardcodedness for payloads with multiple ecosystems
             if payload and 'ecosystem' in payload[0]:
-                print('#### %r' % payload[0])
 
                 # PGM_SERVICE_HOST = os.environ.get(
                 #    "PGM_SERVICE_HOST") + "-" + payload[0]['ecosystem']
@@ -291,7 +287,6 @@ class RecommendationTask():
                 PGM_URL_REST = 'http://bayesian-kronos-maven-schoudhu-greenfield-test.dev.rdu2c.fabric8.io:80'
                 ## TO BE REMOVED
                 pgm_url = PGM_URL_REST + "/api/v1/schemas/kronos_scoring"
-                print('PGM URL: %s' % pgm_url)
                 response = get_session_retry().post(pgm_url, json=payload)
                 if response.status_code != 200:
                     print("HTTP error {}. Error retrieving PGM data.".format(
@@ -309,7 +304,7 @@ class RecommendationTask():
 
     def execute(self, arguments=None):
         started_at = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.%f")
-        results = arguments['result']
+        results = arguments.get('result', None)
         external_request_id = arguments.get('external_request_id', None)
 
         input_task_for_pgm = []
@@ -357,7 +352,6 @@ class RecommendationTask():
             # From PGM response process companion and alternate packages and
             # then get Data from Graph
             # TODO - implement multiple manifest file support for below loop
-            print(json.dumps(pgm_response))
 
             if pgm_response is not None:
                 for pgm_result in pgm_response:
@@ -376,7 +370,6 @@ class RecommendationTask():
                         companion_packages.append(pkg['package_name'])
 
                     # Get Companion Packages from Graph
-                    print("Call for comapnion packages")
                     comp_packages_graph = GraphDB().get_version_information(companion_packages,
                                                                             ecosystem)
 
@@ -419,7 +412,6 @@ class RecommendationTask():
 
                     # if alternate_packages:
                     # Get Alternate Packages from Graph
-                    print("Call for Alternate Packages")
                     alt_packages_graph = GraphDB().get_version_information(
                         alternate_packages, ecosystem)
 
@@ -444,8 +436,6 @@ class RecommendationTask():
                     lic_filtered_list_alt = license_filter_output['filtered_list_pkg_names_alt']
                     lic_filtered_list_com = license_filter_output['filtered_list_pkg_names_com']
 
-                    print("Licenses done")
-
                     if len(lic_filtered_list_alt) > 0:
                         s = set(filtered_alternate_packages).difference(set(lic_filtered_list_alt))
                         msg = \
@@ -465,26 +455,18 @@ class RecommendationTask():
                         get_topics_for_comp(lic_filtered_comp_graph,
                                             pgm_result['companion_packages'])
 
-                    print("Topics Done")
-
                     # Create Companion Block
                     comp_packages = create_package_dict(topics_comp_packages_graph)
                     recommendation['companion'] = comp_packages
-
-                    print("Comp Block Done")
 
                     # Get Topics Added to Filtered Packages
                     topics_comp_packages_graph = GraphDB(). \
                         get_topics_for_alt(lic_filtered_alt_graph,
                                            pgm_result['alternate_packages'])
 
-                    print("Topics for alternate Done")
-
                     # Create Alternate Dict
                     alt_packages = create_package_dict(topics_comp_packages_graph, final_dict)
                     recommendation['alternate'] = alt_packages
-
-                    print("Alt Block Done")
 
             recommendations.append(recommendation)
 
@@ -514,8 +496,11 @@ class RecommendationTask():
         try:
             session.add(wr)
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             session.rollback()
-            return {'recommendation': 'failure', 'external_request_id': external_request_id}
+            return {
+                'recommendation': 'database error',
+                'stack_id': external_request_id,
+                'message': '%s' % e}
 
-        return {'recommendation': 'success'}
+        return {'recommendation': 'success','stack_id': external_request_id}

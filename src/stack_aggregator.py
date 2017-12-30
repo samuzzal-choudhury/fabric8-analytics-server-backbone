@@ -412,9 +412,12 @@ class StackAggregator:
         try:
             session.add(wr)
             session.commit()
-        except SQLAlchemyError:
+        except SQLAlchemyError as e:
             session.rollback()
-            return {'stack_data': 'failure', 'external_request_id': external_request_id}
+            return {
+                'stack_aggregator': 'database error',
+                'stack_id': external_request_id,
+                'message': '%s' % e
+            }
 
-        # return {'recommendation': 'success'}
-        return {"stack_data": 'success'}
+        return {'stack_aggregator': 'success', 'stack_id': external_request_id}
