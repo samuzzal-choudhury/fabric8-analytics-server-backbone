@@ -21,7 +21,7 @@ def liveness():
 
 @app.route('/api/v1/recommender', methods=['POST'])
 def recommender():
-    r = {'recommendation': 'failure', 'stack_id': None}
+    r = {'recommendation': 'failure', 'external_request_id': None}
     input_json = request.get_json()
     if input_json:
         try:
@@ -29,7 +29,7 @@ def recommender():
         except Exception as e:
             r = {
                 'recommendation': 'unexpected error',
-                'stack_id': input_json.get('external_request_id'),
+                'external_request_id': input_json.get('external_request_id'),
                 'message': '%s' % e
             }
 
@@ -38,7 +38,7 @@ def recommender():
 
 @app.route('/api/v1/stack_aggregator', methods=['POST'])
 def stack_aggregator():
-    s = {'stack_aggregator': 'failure', 'stack_id': None}
+    s = {'stack_aggregator': 'failure', 'external_request_id': None}
     input_json = request.get_json()
     if input_json:
         try:
@@ -46,7 +46,7 @@ def stack_aggregator():
         except Exception as e:
             s = {
                 'stack_aggregator': 'unexpected error',
-                'stack_id': input_json.get('external_request_id'),
+                'external_request_id': input_json.get('external_request_id'),
                 'message': '%s' % e
             }
 

@@ -416,8 +416,8 @@ class StackAggregator:
             session.rollback()
             return {
                 'stack_aggregator': 'database error',
-                'stack_id': external_request_id,
+                'external_request_id': external_request_id,
                 'message': '%s' % e
             }
 
-        return {'stack_aggregator': 'success', 'stack_id': external_request_id}
+        return {'stack_aggregator': 'success', 'external_request_id': external_request_id}

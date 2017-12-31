@@ -41,6 +41,10 @@ items:
             value: bayesian-gremlin-http-preview-b6ff-bayesian-preview.b6ff.rh-idev.openshiftapps.com
           - name: BAYESIAN_GREMLIN_HTTP_SERVICE_PORT
             value: "80"
+          - name: PGBOUNCER_SERVICE_HOST
+            value: bayesian-pgbouncer
+          - name: PGBOUNCER_SERVICE_PORT
+            value: "5432"
           - name: LICENSE_SERVICE_HOST
             value: bayesian-license-scoring-bayesian-preview.b6ff.rh-idev.openshiftapps.com
           - name: LICENSE_SERVICE_PORT
@@ -66,6 +70,10 @@ items:
                 key: username
           - name: API_BACKBONE_SERVICE_PORT
             value: "5000"
+          - name: API_BACKBONE_SERVICE_TIMEOUT
+            value: "60"
+          - name: NUMBER_WORKER_PROCESS
+            value: "2"
           image: 'spicemit/fabric8-analytics-server-backbone:rest_4'
           name: f8a-server-backbone
           ports:
