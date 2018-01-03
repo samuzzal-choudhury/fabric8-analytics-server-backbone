@@ -288,7 +288,7 @@ class RecommendationTask():
                     host=os.environ.get("PGM_SERVICE_HOST"),
                     port=os.environ.get("PGM_SERVICE_PORT"))
                 ## TO BE REMOVED
-                PGM_URL_REST = "http://aagam-outlier-stack-analysis.dev.rdu2c.fabric8.io"
+                PGM_URL_REST = "http://bayesian-kronos-maven-miteshpatel-greenfield-test.dev.rdu2c.fabric8.io"
                 pgm_url = PGM_URL_REST + "/api/v1/schemas/kronos_scoring"
                 response = get_session_retry().post(pgm_url, json=payload)
                 if response.status_code != 200:
