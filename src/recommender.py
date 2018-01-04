@@ -506,4 +506,7 @@ class RecommendationTask():
                 'external_request_id': external_request_id,
                 'message': '%s' % e}
 
+        dt = datetime.datetime.utcnow().isoformat()
+        print ('%s|%s|PERF|RECOMMENDER|END|' % external_request_id, dt)
+
         return {'recommendation': 'success', 'external_request_id': external_request_id}

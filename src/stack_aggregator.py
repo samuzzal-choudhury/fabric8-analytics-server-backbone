@@ -420,4 +420,7 @@ class StackAggregator:
                 'message': '%s' % e
             }
 
+        dt = datetime.datetime.utcnow().isoformat()
+        print('%s|%s|PERF|STACK_AGGREGATOR|END|' % external_request_id, dt)
+
         return {'stack_aggregator': 'success', 'external_request_id': external_request_id}
