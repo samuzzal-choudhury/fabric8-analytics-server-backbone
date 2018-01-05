@@ -489,7 +489,7 @@ class RecommendationTask():
         wr = WorkerResult(
             worker='recommendation_v2',
             worker_id=None,
-            external_request_id=external_request_id,
+            external_request_id=os.getenv('TEST_REQUEST_ID', external_request_id),
             analysis_id=None,
             task_result=task_result,
             error=False
@@ -505,8 +505,5 @@ class RecommendationTask():
                 'recommendation': 'database error',
                 'external_request_id': external_request_id,
                 'message': '%s' % e}
-
-        dt = datetime.datetime.utcnow().isoformat()
-        print ('%s|%s|PERF|RECOMMENDER|END|' % external_request_id, dt)
 
         return {'recommendation': 'success', 'external_request_id': external_request_id}

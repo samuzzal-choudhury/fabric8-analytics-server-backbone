@@ -9,6 +9,7 @@ from data_base import WorkerResult
 from sqlalchemy.exc import SQLAlchemyError
 import json
 import datetime
+import os
 
 import logging
 import requests
@@ -402,7 +403,7 @@ class StackAggregator:
         wr = WorkerResult(
             worker='stack_aggregator_v2',
             worker_id=None,
-            external_request_id=external_request_id,
+            external_request_id=os.getenv('TEST_REQUEST_ID', external_request_id),
             analysis_id=None,
             task_result=stack_data,
             error=False
@@ -419,8 +420,5 @@ class StackAggregator:
                 'external_request_id': external_request_id,
                 'message': '%s' % e
             }
-
-        dt = datetime.datetime.utcnow().isoformat()
-        print('%s|%s|PERF|STACK_AGGREGATOR|END|' % external_request_id, dt)
 
         return {'stack_aggregator': 'success', 'external_request_id': external_request_id}
